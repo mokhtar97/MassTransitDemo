@@ -22,26 +22,32 @@ namespace MassTransit.Management
             return services;
         }
 
-        public static IServiceCollection AddMassTransitConsumerServices<T>(this IServiceCollection services, T consumer, string instanceId) where T : class
+        public static IServiceCollection AddMassTransitConsumerServices(this IServiceCollection services,  List<Type> consumerTypes, List<string> instanceId) 
         {
             
             services.AddMassTransit(x =>
             {
                 x.SetKebabCaseEndpointNameFormatter();
 
-             
-                x.AddConsumer<T>(
-                    c =>
-                    {
-                        c.UseMessageRetry(r =>
-                        {
-                            r.Interval(2, 10000);
-                            // r.Handle<DataException>(x => x.Message.Contains("SQL"));
-                        });
-                        c.UseInMemoryOutbox();
-                    }
-                    )
-                .Endpoint(c => c.InstanceId = instanceId);
+
+                //x.AddConsumer<T>(
+                //    c =>
+                //    {
+                //        c.UseMessageRetry(r =>
+                //        {
+                //            r.Interval(2, 10000);
+                //            // r.Handle<DataException>(x => x.Message.Contains("SQL"));
+                //        });
+                //        c.UseInMemoryOutbox();
+                //    }
+                //    )
+                //.Endpoint(c => c.InstanceId = instanceId);
+                int instanceCount = 0;
+                  foreach (var consumerType in consumerTypes)
+                   {
+                   x.AddConsumer(consumerType).Endpoint(c => c.InstanceId = instanceId[instanceCount]);
+                    instanceCount++;
+                  }
 
                 x.UsingRabbitMq((context, cfg) =>
                 {

@@ -37,34 +37,17 @@ namespace Branch1
             {
                 c.SwaggerDoc("v1", new OpenApiInfo { Title = "Branch1", Version = "v1" });
             });
-            //services.AddMassTransit(x =>
-            //{
-            //    //x.AddConsumer<DecisionConsumer>();
+           
+            
 
-            //    x.SetKebabCaseEndpointNameFormatter();
+            var z =new DecisionConsumer();
+              List<Type> types =new List<Type>();
+              List<string> instanceIds = new List<string>();
+                types.Add(z.GetType());
+            instanceIds.Add("AbdElglil");
 
-            //    x.AddConsumer<DecisionConsumer>(
-            //        c =>
-            //        {
-            //            c.UseMessageRetry(r =>
-            //           {
-            //               r.Interval(2,10000);
-            //                // r.Handle<DataException>(x => x.Message.Contains("SQL"));
-            //            });
-            //            c.UseInMemoryOutbox();
-            //        }
-            //        )
-            //    .Endpoint(c => c.InstanceId = "Branch1");
-               
-            //    x.UsingRabbitMq((context, cfg) =>
-            //    {
-            //        cfg.ConfigureEndpoints(context);
-            //    });
 
-            //});
-            //services.AddMassTransitHostedService();
-            var x = new DecisionConsumer();
-            services.AddMassTransitConsumerServices<Decision>(x, "mokh");
+            services.AddMassTransitConsumerServices(types, instanceIds);
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
