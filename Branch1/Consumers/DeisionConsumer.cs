@@ -21,7 +21,7 @@ namespace Branch1.Consumers
             _logger = logger;
         }
         public Task Consume(ConsumeContext<Decision> context)
-        {
+       {
             
             if (context.GetRetryAttempt() == 0)
             {

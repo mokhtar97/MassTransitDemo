@@ -1,4 +1,5 @@
 ﻿using GreenPipes;
+using MassTransit.Management.Core;
 using Microsoft.Extensions.DependencyInjection;
 using System;
 using System.Collections.Generic;
@@ -9,7 +10,7 @@ namespace MassTransit.Management
 {
     public static class MassTransitServiceRegistration
     {
-        public static IServiceCollection AddMassTransitServices(this IServiceCollection services)
+        public static IServiceCollection AddMassTransitPublisher(this IServiceCollection services)
         {
             services.AddMassTransit(x =>
             {
@@ -22,7 +23,7 @@ namespace MassTransit.Management
             return services;
         }
 
-        public static IServiceCollection AddMassTransitConsumerServices(this IServiceCollection services,  List<Type> consumerTypes, List<string> instanceId) 
+        public static IServiceCollection AddMassTransitConsumer(this IServiceCollection services,  List<ConsumerBaseEntity> consumers) 
         {
             
             services.AddMassTransit(x =>
@@ -45,14 +46,19 @@ namespace MassTransit.Management
                 //.Endpoint(c => c.InstanceId = instanceId); 
                 #endregion
                 int instanceCount = 0;
-                  foreach (var consumerType in consumerTypes)
+                  foreach (var consumer in consumers)
                    {
-                   x.AddConsumer(consumerType).Endpoint(c => c.InstanceId = instanceId[instanceCount]);
+                   x.AddConsumer(consumer.ConsumerType).Endpoint(c => c.InstanceId = consumer.InstanceId);
                     instanceCount++;
                   }
 
                 x.UsingRabbitMq((context, cfg) =>
                 {
+                    cfg.UseMessageRetry(r =>
+                            {
+                                r.Interval(2, 10000);
+                                // r.Handle<DataException>(x => x.Message.Contains("SQL"));
+                            });
                     cfg.ConfigureEndpoints(context);
                 });
 

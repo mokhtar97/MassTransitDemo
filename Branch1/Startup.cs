@@ -16,6 +16,7 @@ using GreenPipes; // for call to Immediate
 using System.Data;
 using MassTransit.Messages.Models.Commands;
 using MassTransit.Management;
+using MassTransit.Management.Core;
 
 namespace Branch1
 {
@@ -41,13 +42,9 @@ namespace Branch1
             
 
             var z =new DecisionConsumer();
-              List<Type> types =new List<Type>();
-              List<string> instanceIds = new List<string>();
-                types.Add(z.GetType());
-            instanceIds.Add("Emad");
-
-
-            services.AddMassTransitConsumerServices(types, instanceIds);
+            List<ConsumerBaseEntity> consumers = new List<ConsumerBaseEntity>();
+            consumers.Add(new ConsumerBaseEntity() { ConsumerType=z.GetType(),InstanceId="baghadido" });
+            services.AddMassTransitConsumer(consumers);
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
