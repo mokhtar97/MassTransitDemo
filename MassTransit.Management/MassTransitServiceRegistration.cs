@@ -30,6 +30,7 @@ namespace MassTransit.Management
                 x.SetKebabCaseEndpointNameFormatter();
 
 
+                #region RetryLimit
                 //x.AddConsumer<T>(
                 //    c =>
                 //    {
@@ -41,7 +42,8 @@ namespace MassTransit.Management
                 //        c.UseInMemoryOutbox();
                 //    }
                 //    )
-                //.Endpoint(c => c.InstanceId = instanceId);
+                //.Endpoint(c => c.InstanceId = instanceId); 
+                #endregion
                 int instanceCount = 0;
                   foreach (var consumerType in consumerTypes)
                    {

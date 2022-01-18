@@ -44,7 +44,7 @@ namespace Branch1
               List<Type> types =new List<Type>();
               List<string> instanceIds = new List<string>();
                 types.Add(z.GetType());
-            instanceIds.Add("AbdElglil");
+            instanceIds.Add("Emad");
 
 
             services.AddMassTransitConsumerServices(types, instanceIds);
