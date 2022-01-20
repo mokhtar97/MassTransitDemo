@@ -9,6 +9,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\MassTransit.Management\MassTransit.Management.csproj" />
     <ProjectReference Include="..\MassTransit.Models\MassTransit.Messages.csproj" />
   </ItemGroup>
 

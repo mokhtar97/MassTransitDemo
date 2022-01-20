@@ -44,7 +44,7 @@ namespace Branch1
             var z =new DecisionConsumer();
             List<ConsumerBaseEntity> consumers = new List<ConsumerBaseEntity>();
             consumers.Add(new ConsumerBaseEntity() { ConsumerType=z.GetType(),InstanceId="baghadido" });
-            services.AddMassTransitConsumer(consumers);
+            services.AddMassTransitConfiguration(consumers);
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

@@ -2,17 +2,24 @@ using MassTransit.Management;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using Microsoft.OpenApi.Models;
+using Order.Api.Models;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using AutoMapper;
+using System.Reflection;
+using MassTransit;
+using Order.Api.Consumers;
+using MassTransit.Management.Core;
 
-namespace MasterBranch
+namespace Order.Api
 {
     public class Startup
     {
@@ -27,12 +34,24 @@ namespace MasterBranch
         public void ConfigureServices(IServiceCollection services)
         {
 
-            services.AddControllers();
+            
             services.AddSwaggerGen(c =>
             {
-                c.SwaggerDoc("v1", new OpenApiInfo { Title = "MasterBranch", Version = "v1" });
+                c.SwaggerDoc("v1", new OpenApiInfo { Title = "Order.Api", Version = "v1" });
             });
-            services.AddMassTransitConfiguration();
+
+            services.AddAutoMapper(Assembly.GetExecutingAssembly());
+            services.AddDbContext<OrderContext>(options =>
+             options.UseSqlServer(Configuration["ConnectionString"]));
+      
+            
+          
+            var z = new OrderFailedConsumer();
+            List<ConsumerBaseEntity> consumers = new List<ConsumerBaseEntity>();
+            consumers.Add(new ConsumerBaseEntity() { ConsumerType = z.GetType(), InstanceId = "OrderFailed" });
+            services.AddMassTransitConfiguration(consumers);
+            services.AddControllers();
+           
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -42,7 +61,7 @@ namespace MasterBranch
             {
                 app.UseDeveloperExceptionPage();
                 app.UseSwagger();
-                app.UseSwaggerUI(c => c.SwaggerEndpoint("/swagger/v1/swagger.json", "MasterBranch v1"));
+                app.UseSwaggerUI(c => c.SwaggerEndpoint("/swagger/v1/swagger.json", "Order.Api v1"));
             }
 
             app.UseRouting();

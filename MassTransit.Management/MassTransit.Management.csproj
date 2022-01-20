@@ -13,4 +13,8 @@
     <PackageReference Include="Serilog.Sinks.Seq" Version="5.1.1" />
   </ItemGroup>
 
+  <ItemGroup>
+    <ProjectReference Include="..\MassTransit.Models\MassTransit.Messages.csproj" />
+  </ItemGroup>
+
 </Project>

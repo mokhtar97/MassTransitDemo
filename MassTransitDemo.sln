@@ -13,6 +13,10 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Branch1", "Branch1\Branch1.
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Branch2", "Branch2\Branch2.csproj", "{9B5D92C0-6B13-487A-AFFC-7034DB3FC379}"
 EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Order.Api", "Order.Api\Order.Api.csproj", "{24104D5D-E98E-41B8-BACB-B0079611F766}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Stock.Api", "Stock.Api\Stock.Api.csproj", "{77E86A22-EF7C-441D-8792-4E4EEF9B102D}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -39,6 +43,14 @@ Global
 		{9B5D92C0-6B13-487A-AFFC-7034DB3FC379}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{9B5D92C0-6B13-487A-AFFC-7034DB3FC379}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{9B5D92C0-6B13-487A-AFFC-7034DB3FC379}.Release|Any CPU.Build.0 = Release|Any CPU
+		{24104D5D-E98E-41B8-BACB-B0079611F766}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{24104D5D-E98E-41B8-BACB-B0079611F766}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{24104D5D-E98E-41B8-BACB-B0079611F766}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{24104D5D-E98E-41B8-BACB-B0079611F766}.Release|Any CPU.Build.0 = Release|Any CPU
+		{77E86A22-EF7C-441D-8792-4E4EEF9B102D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{77E86A22-EF7C-441D-8792-4E4EEF9B102D}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{77E86A22-EF7C-441D-8792-4E4EEF9B102D}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{77E86A22-EF7C-441D-8792-4E4EEF9B102D}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
