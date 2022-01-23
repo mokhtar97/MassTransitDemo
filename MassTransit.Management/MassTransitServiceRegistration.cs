@@ -13,18 +13,18 @@ namespace MassTransit.Management
     public static class MassTransitServiceRegistration
     {
 
-        public static IServiceCollection AddMassTransitPublisher(this IServiceCollection services)
-        {
-            services.AddMassTransit(x =>
-            {
-                x.UsingRabbitMq();
-            });
+        //public static IServiceCollection AddMassTransitPublisher(this IServiceCollection services)
+        //{
+        //    services.AddMassTransit(x =>
+        //    {
+        //        x.UsingRabbitMq();
+        //    });
 
-            services.AddMassTransitHostedService();
+        //    services.AddMassTransitHostedService();
 
 
-            return services;
-        }
+        //    return services;
+        //}
 
         public static IServiceCollection AddMassTransitConfiguration(this IServiceCollection services, List<ConsumerBaseEntity> consumers = null) 
         {

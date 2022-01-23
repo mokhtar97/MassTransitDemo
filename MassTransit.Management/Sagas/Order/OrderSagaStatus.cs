@@ -15,5 +15,7 @@ namespace MassTransit.Management.Sagas.Order
         public int OrderId { get; set; }
         public string Name { get; set; }
         public int Amount { get; set; }
+        public DateTime OrderCreatedDate { get; set; }
+        public DateTime OrderFailedCreatedDate { get; set; }
     }
 }

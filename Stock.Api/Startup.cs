@@ -62,9 +62,11 @@ namespace Stock.Api
 
             var z = new StockConsumer();
             var y = new StockOrderFailed();
+            var w= new OrderSuccess();
             List<ConsumerBaseEntity> consumers = new List<ConsumerBaseEntity>();
             consumers.Add(new ConsumerBaseEntity() { ConsumerType = z.GetType(), InstanceId = "OrderCreated" });
             consumers.Add(new ConsumerBaseEntity() { ConsumerType = y.GetType(), InstanceId = "OrderFailed" });
+            consumers.Add(new ConsumerBaseEntity() { ConsumerType = w.GetType(), InstanceId = "OrderSuccess" });
             services.AddMassTransitConfiguration(consumers);
             services.AddControllers();
         }

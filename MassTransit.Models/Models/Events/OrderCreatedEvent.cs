@@ -9,5 +9,7 @@ namespace MassTransit.Messages.Models.Events
         public int OrderId { get; set; }
         public string Name { get; set; }
         public int Amount { get; set; }
+
+       
     }
 }
