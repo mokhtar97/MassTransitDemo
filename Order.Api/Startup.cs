@@ -18,6 +18,8 @@ using System.Reflection;
 using MassTransit;
 using Order.Api.Consumers;
 using MassTransit.Management.Core;
+using MassTransit.Management.Sagas.Order;
+using MassTransit.Saga;
 
 namespace Order.Api
 {
@@ -50,6 +52,7 @@ namespace Order.Api
             List<ConsumerBaseEntity> consumers = new List<ConsumerBaseEntity>();
             consumers.Add(new ConsumerBaseEntity() { ConsumerType = z.GetType(), InstanceId = "OrderFailed" });
             services.AddMassTransitConfiguration(consumers);
+        
             services.AddControllers();
            
         }

@@ -10,22 +10,22 @@ namespace MassTransit.Management.Sagas.Order
     {
         public OrderSagaMachine()
         {
-            InstanceState(s => s.CurrentState);
+            InstanceState(s => s.CurrentState, Active);
 
             Event(() => OrderCreate, x =>
             x.CorrelateBy(order => order.OrderId.ToString(),
-            context => context.Message.ToString())
+            context => context.Message.OrderId.ToString())
             .SelectId(context => Guid.NewGuid()));
 
-            Event(() => OrderFailed, x =>
-            x.CorrelateBy(order => order.OrderId.ToString(),
-            context => context.Message.ToString()));
 
 
-            Event(() => OrderSuccess, x =>
-           x.CorrelateBy(order => order.OrderId.ToString(),
-           context => context.Message.ToString()));
-          
+            Event(() => OrderFailed, x => x.CorrelateById(context =>
+                context.Message.CorrelationId));
+
+
+            Event(() => OrderSuccess, x => x.CorrelateById(context =>
+                context.Message.CorrelationId));
+
             Initially(
                When(OrderCreate)
                .Then(context =>
@@ -34,31 +34,35 @@ namespace MassTransit.Management.Sagas.Order
                    context.Instance.OrderId = context.Data.OrderId;
                    context.Instance.Name = context.Data.Name;
                    context.Instance.Amount = context.Data.Amount;
+                   // context.Instance.CurrentState = ProcessOrder;
                }).
                If(context => context.Data.Amount != 0, x =>
-                    //x.Publish(context => new OrderCreatedEvent())
-                    x.TransitionTo(ProcessOrder)));
+                   // x.Publish(context => new OrderSuccessCreatedEvent())
+                   x.TransitionTo(Active)));
 
             //During Not Working Fine With Us.
-            //During(ProcessOrder,
-            //    When(OrderSuccess)
-            //        .Then(context => context.Instance.OrderCreatedDate = DateTime.Now)
-            //        .ThenAsync(
-            //            context => Console.Out.WriteLineAsync(
-            //                $"Order processed. Id: {context.Instance.CorrelationId}"))
-            //     .Publish(context => new OrderSuccessCreatedEvent() { name = "mokhtarsd" }),
-            //     When(OrderFailed)
-            //        .Then(context => context.Instance.OrderFailedCreatedDate = DateTime.Now)
-            //        .ThenAsync(
-            //            c => Console.Out.WriteLineAsync(
-            //                $"Order failed for amount: {c.Instance.Amount} Id:{c.Instance.CorrelationId}"))
-            //        .Publish(context => new OrderSuccessCreatedEvent() { name = "mokhtarsd" })
-            //        .Finalize());
+            #region During
+            During(Active,   
+                When(OrderCreate)
+                    .Then(context => context.Instance.OrderCreatedDate = DateTime.Now)
+                    .ThenAsync(
+                        context => Console.Out.WriteLineAsync(
+                            $"Order processed. Id: {context.Instance.CorrelationId}"))
+                 .Publish(context => new OrderSuccessCreatedEvent() { name = "mokhtarsd" }),
+                 When(OrderFailed)
+                    .Then(context => context.Instance.OrderFailedCreatedDate = DateTime.Now)
+                    .ThenAsync(
+                        c => Console.Out.WriteLineAsync(
+                            $"Order failed for amount: {c.Instance.Amount} Id:{c.Instance.CorrelationId}"))
+                    .Publish(context => new OrderSuccessCreatedEvent() { name = "mokhtarsd" })
+                    .Finalize());
+            #endregion
 
             SetCompletedWhenFinalized();
         }
 
         public State ProcessOrder { get; private set; }
+        public State Active { get; private set; }
         public Event<OrderCreatedEvent> OrderCreate { get; private set; }
 
         public Event<OrderFailedCreatedEvent> OrderFailed { get; private set; }

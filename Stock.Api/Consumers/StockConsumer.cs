@@ -27,7 +27,7 @@ namespace Stock.Api.Consumers
 
             if (context.GetRetryAttempt() == 0)
             {
-                if(context.Message.Amount==2)
+                if(context.Message.Amount>2)
                 {
                      publishEndpoint.Publish<OrderFailedCreatedEvent>(new OrderFailedCreatedEvent() { Id = context.Message.OrderId });
                 }

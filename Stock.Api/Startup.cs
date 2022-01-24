@@ -1,6 +1,8 @@
 using MassTransit;
 using MassTransit.Management;
 using MassTransit.Management.Core;
+using MassTransit.Management.Sagas.Order;
+using MassTransit.Saga;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc;
@@ -41,25 +43,6 @@ namespace Stock.Api
             options.UseSqlServer(Configuration["ConnectionString"]));
 
 
-            //var z = new StockConsumer();
-            //List<ConsumerBaseEntity> consumers = new List<ConsumerBaseEntity>();
-            //consumers.Add(new ConsumerBaseEntity() { ConsumerType = z.GetType(), InstanceId = "Saga" });
-            //services.AddMassTransitConfiguration(consumers);
-
-            //services.AddMassTransit(x =>
-            //{
-            //    x.SetKebabCaseEndpointNameFormatter();
-            //    x.AddConsumer<StockConsumer>().Endpoint(c => c.InstanceId = "OrderCreated");
-            //    x.AddConsumer<StockOrderFailed>().Endpoint(c => c.InstanceId = "OrderFailed");
-            //    x.UsingRabbitMq((context, cfg) =>
-            //    {
-            //        cfg.ConfigureEndpoints(context);
-            //    });
-            
-
-            //});
-            //services.AddMassTransitHostedService();
-
             var z = new StockConsumer();
             var y = new StockOrderFailed();
             var w= new OrderSuccess();
@@ -67,7 +50,8 @@ namespace Stock.Api
             consumers.Add(new ConsumerBaseEntity() { ConsumerType = z.GetType(), InstanceId = "OrderCreated" });
             consumers.Add(new ConsumerBaseEntity() { ConsumerType = y.GetType(), InstanceId = "OrderFailed" });
             consumers.Add(new ConsumerBaseEntity() { ConsumerType = w.GetType(), InstanceId = "OrderSuccess" });
-            services.AddMassTransitConfiguration(consumers);
+            services.AddMassTransitConfiguration(consumers);         
+
             services.AddControllers();
         }
 

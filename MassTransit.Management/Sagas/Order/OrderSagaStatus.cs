@@ -9,7 +9,7 @@ namespace MassTransit.Management.Sagas.Order
     {
         //this for Status
         public Guid CorrelationId { get; set; }
-        public State CurrentState { get; set; }
+        public int CurrentState { get; set; }
 
         //this for business
         public int OrderId { get; set; }

@@ -13,30 +13,17 @@ namespace MassTransit.Management
     public static class MassTransitServiceRegistration
     {
 
-        //public static IServiceCollection AddMassTransitPublisher(this IServiceCollection services)
-        //{
-        //    services.AddMassTransit(x =>
-        //    {
-        //        x.UsingRabbitMq();
-        //    });
-
-        //    services.AddMassTransitHostedService();
-
-
-        //    return services;
-        //}
-
-        public static IServiceCollection AddMassTransitConfiguration(this IServiceCollection services, List<ConsumerBaseEntity> consumers = null) 
+        public static IServiceCollection AddMassTransitConfiguration(this IServiceCollection services, List<ConsumerBaseEntity> consumers = null)
         {
 
 
 
             services.AddMassTransit(x =>
-            {              
+            {
                 x.SetKebabCaseEndpointNameFormatter();
-
+               
                 //consumers
-                if(consumers != null)
+                if (consumers != null)
                 {
                     int instanceCount = 0;
                     foreach (var consumer in consumers)
@@ -45,7 +32,8 @@ namespace MassTransit.Management
                         instanceCount++;
                     }
                 }
-                
+
+
 
                 //middleware like retry limit ,handle error ....
                 x.UsingRabbitMq((context, cfg) =>
@@ -54,16 +42,25 @@ namespace MassTransit.Management
                             {
                                 r.Interval(2, 10000);
                             });
+
+                    cfg.UseInMemoryOutbox();
                     cfg.ConfigureEndpoints(context);
-                 
+
                 });
 
                 //saga 
                 x.AddSagaStateMachine<OrderSagaMachine, OrderSagaStatus>()
                   .InMemoryRepository();
 
+
+
+
+
             });
+
+
             services.AddMassTransitHostedService();
+
 
 
 
