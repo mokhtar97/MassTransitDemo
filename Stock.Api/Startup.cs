@@ -43,13 +43,13 @@ namespace Stock.Api
             options.UseSqlServer(Configuration["ConnectionString"]));
 
 
-            var z = new StockConsumer();
+           // var z = new StockConsumer();
             var y = new StockOrderFailed();
-            var w= new OrderSuccess();
+           // var w= new OrderSuccess();
             List<ConsumerBaseEntity> consumers = new List<ConsumerBaseEntity>();
-            consumers.Add(new ConsumerBaseEntity() { ConsumerType = z.GetType(), InstanceId = "OrderCreated" });
+           // consumers.Add(new ConsumerBaseEntity() { ConsumerType = z.GetType(), InstanceId = "OrderCreated" });
             consumers.Add(new ConsumerBaseEntity() { ConsumerType = y.GetType(), InstanceId = "OrderFailed" });
-            consumers.Add(new ConsumerBaseEntity() { ConsumerType = w.GetType(), InstanceId = "OrderSuccess" });
+            //consumers.Add(new ConsumerBaseEntity() { ConsumerType = w.GetType(), InstanceId = "OrderSuccess" });
             services.AddMassTransitConfiguration(consumers);         
 
             services.AddControllers();

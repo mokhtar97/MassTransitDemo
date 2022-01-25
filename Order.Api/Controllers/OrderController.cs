@@ -34,14 +34,28 @@ namespace Order.Api.Controllers
 
         [HttpPost]
         public  ActionResult Post([FromBody] Orders order)
-
-        {
-           
-           
+        {                    
             var entity= orderContext.orders.Add(new Orders() { Name = order.Name, Amount = order.Amount });
              orderContext.SaveChanges();
             
             _publishEndpoint.Publish<OrderCreatedEvent>(mapper.Map<OrderCreatedEvent>(entity.Entity));
+         
+            return Ok(order.Amount);
+        }
+
+        [HttpPost("Hamada")]
+        public ActionResult Hamada([FromBody] Orders order)
+
+        {           
+            _publishEndpoint.Publish<OrderSuccessCreatedEvent>(new OrderSuccessCreatedEvent());
+            return Ok(order.Amount);
+        }
+
+        [HttpPost("HamadaFailed")]
+        public ActionResult HamadaFailed([FromBody] Orders order)
+
+        {
+            _publishEndpoint.Publish<OrderFailedCreatedEvent>(new OrderFailedCreatedEvent());
             return Ok(order.Amount);
         }
 

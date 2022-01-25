@@ -48,9 +48,9 @@ namespace Order.Api
       
             
           
-            var z = new OrderFailedConsumer();
+            //var z = new OrderFailedConsumer();
             List<ConsumerBaseEntity> consumers = new List<ConsumerBaseEntity>();
-            consumers.Add(new ConsumerBaseEntity() { ConsumerType = z.GetType(), InstanceId = "OrderFailed" });
+            //consumers.Add(new ConsumerBaseEntity() { ConsumerType = z.GetType(), InstanceId = "OrderFailed" });
             services.AddMassTransitConfiguration(consumers);
         
             services.AddControllers();
