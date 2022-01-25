@@ -26,6 +26,9 @@ namespace MassTransit.Management.Sagas.Order
             Event(() => OrderSuccess, x => x.CorrelateById(context =>
                 context.Message.CorrelationId));
 
+            Event(() => OrderSubmitted, x => x.CorrelateById(context =>
+               context.Message.CorrelationId));
+            
             Initially(
                When(OrderSuccess)
                   //.Then(context =>
@@ -36,11 +39,11 @@ namespace MassTransit.Management.Sagas.Order
                   //    context.Instance.Amount = context.Data.Amount;
                   //})
                   // If(context => context.Data.Amount == 0, x =>
-                  .Publish(context => new OrderSuccessCreatedEvent())
-                   .TransitionTo(Active),
-               When(OrderFailed)
-               .Publish(context => new OrderFailedCreatedEvent())
+                  .Publish(context => new OrderSubmitCreatedEvent())
                    .TransitionTo(Active)
+               //When(OrderFailed)
+               //.Publish(context => new OrderFailedCreatedEvent())
+               //    .TransitionTo(Active)
                    );
 
             //During Not Working Fine With Us.
@@ -53,12 +56,19 @@ namespace MassTransit.Management.Sagas.Order
                         context => Console.Out.WriteLineAsync(
                             $"Order processed. Id: {context.Instance.CorrelationId}"))
                  .Publish(context => new OrderSuccessCreatedEvent() { name = "mokhtarsd From Success" }),
-                 When(OrderFailed)
+                 When(OrderSubmitted)
+                    .Then(context => context.Instance.OrderCreatedDate = DateTime.Now)
+                    .ThenAsync(
+                        context => Console.Out.WriteLineAsync(
+                            $"Order processed. Id: {context.Instance.CorrelationId}"))
+                 .Publish(context => new OrderFailedCreatedEvent() { Name = "mokhtarsd From Submitt Success" }),
+                When(OrderFailed)
                     .Then(context => context.Instance.OrderFailedCreatedDate = DateTime.Now)
                     .ThenAsync(
                         c => Console.Out.WriteLineAsync(
                             $"Order failed for amount: {c.Instance.Amount} Id:{c.Instance.CorrelationId}"))
                     .Publish(context => new OrderFailedCreatedEvent() { Name = "mokhtarsd From Failed", Amount=55 })
+              
                     .Finalize());
             #endregion
 
@@ -70,8 +80,9 @@ namespace MassTransit.Management.Sagas.Order
         public Event<OrderCreatedEvent> OrderCreate { get; private set; }
 
         public Event<OrderFailedCreatedEvent> OrderFailed { get; private set; }
-
+        
         public Event<OrderSuccessCreatedEvent> OrderSuccess { get; private set; }
-
+        public Event<OrderSubmitCreatedEvent> OrderSubmitCreate { get; private set; }
+        public Event<OrderSubmittedEvent> OrderSubmitted { get; private set; }
     }
 }

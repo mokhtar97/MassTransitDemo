@@ -59,6 +59,14 @@ namespace Order.Api.Controllers
             return Ok(order.Amount);
         }
 
+        [HttpPost("HamadaFailedSubmit")]
+        public ActionResult HamadaFailedSubmit([FromBody] Orders order)
+
+        {
+            _publishEndpoint.Publish<OrderSubmitCreatedEvent>(new OrderSubmitCreatedEvent());
+            return Ok(order.Amount);
+        }
+        
     }
 }
 
