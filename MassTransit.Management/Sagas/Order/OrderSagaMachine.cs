@@ -39,7 +39,7 @@ namespace MassTransit.Management.Sagas.Order
                   //    context.Instance.Amount = context.Data.Amount;
                   //})
                   // If(context => context.Data.Amount == 0, x =>
-                  .Publish(context => new OrderSubmitCreatedEvent())
+                  .Publish(context => new OrderSubmitCreatedEvent() { CorrelationId= context.Instance.CorrelationId })
                    .TransitionTo(Active)
                //When(OrderFailed)
                //.Publish(context => new OrderFailedCreatedEvent())
@@ -60,8 +60,8 @@ namespace MassTransit.Management.Sagas.Order
                     .Then(context => context.Instance.OrderCreatedDate = DateTime.Now)
                     .ThenAsync(
                         context => Console.Out.WriteLineAsync(
-                            $"Order processed. Id: {context.Instance.CorrelationId}"))
-                 .Publish(context => new OrderFailedCreatedEvent() { Name = "mokhtarsd From Submitt Success" }),
+                            $"Order Submitted processed. Id: {context.Instance.CorrelationId}"))
+                 .Publish(context => new OrderSubmitCreatedEvent() { Name = "mokhtarsd From Submitt Success" }),
                 When(OrderFailed)
                     .Then(context => context.Instance.OrderFailedCreatedDate = DateTime.Now)
                     .ThenAsync(

@@ -10,7 +10,7 @@ namespace Stock.Api.Consumers
 {
     public class OrderSubmitConsumer : IConsumer<OrderSubmitCreatedEvent>
     {
-        ILogger<OrderSubmitConsumer> _logger;
+        private readonly ILogger<OrderSubmitConsumer> _logger;
         private readonly IPublishEndpoint publishEndpoint;
         public OrderSubmitConsumer()
         {
@@ -32,7 +32,7 @@ namespace Stock.Api.Consumers
                 publishEndpoint.Publish<OrderSubmittedEvent>(new OrderSubmittedEvent() );
                 // }
                 // _logger.LogInformation("Value Retry 1 Recived From Queue to Branch 1: {from},{to},{schoolName},{Description}", context.Message.From, context.Message.To, context.Message.SchoolName, context.Message.Description);
-                return Task.FromResult(1);
+                //return Task.FromResult(1);
                 // _logger.LogInformation("Value Retry 1 Recived From Queue to Branch 1: {from},{to},{schoolName},{Description}", context.Message.From, context.Message.To, context.Message.SchoolName, context.Message.Description);
                 return Task.FromResult(1);
             }
