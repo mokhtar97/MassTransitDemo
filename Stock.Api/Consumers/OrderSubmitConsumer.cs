@@ -21,28 +21,32 @@ namespace Stock.Api.Consumers
             _logger = logger;
             publishEndpoint = _publishEndpoint;
         }
-        public Task Consume(ConsumeContext<OrderSubmitCreatedEvent> context)
+        public  Task Consume(ConsumeContext<OrderSubmitCreatedEvent> context)
         {
 
             if (context.GetRetryAttempt() == 0)
             {
 
-                //  if (context.Message.Amount > 2)
-                // {
-                publishEndpoint.Publish<OrderSubmittedEvent>(new OrderSubmittedEvent() );
-                // }
-                // _logger.LogInformation("Value Retry 1 Recived From Queue to Branch 1: {from},{to},{schoolName},{Description}", context.Message.From, context.Message.To, context.Message.SchoolName, context.Message.Description);
-                //return Task.FromResult(1);
-                // _logger.LogInformation("Value Retry 1 Recived From Queue to Branch 1: {from},{to},{schoolName},{Description}", context.Message.From, context.Message.To, context.Message.SchoolName, context.Message.Description);
+                if (context.Message.Amount > 2)
+                {
+                    publishEndpoint.Publish<OrderSubmittedFailedEvent>(new OrderSubmittedFailedEvent() { CorrelationId = context.Message.CorrelationId });
+                }
+                else
+                {
+                    publishEndpoint.Publish<OrderShippmentStartEvent>(new OrderShippmentStartEvent() { CorrelationId = context.Message.CorrelationId });
+                }
+            
                 return Task.FromResult(1);
             }
             if (context.GetRetryAttempt() == 1)
             {
-                //  _logger.LogInformation("Value Retry 1 Recived From Queue to Branch 1: {from},{to},{schoolName},{Description}", context.Message.From, context.Message.To, context.Message.SchoolName, context.Message.Description);
+              
                 return Task.FromResult(1);
             }
-            // _logger.LogInformation("Value Recived From Queue to Branch 1: {from},{to},{schoolName},{Description}", context.Message.From, context.Message.To, context.Message.SchoolName, context.Message.Description);
+            
             return Task.FromResult(1);
         }
+
+        
     }
 }

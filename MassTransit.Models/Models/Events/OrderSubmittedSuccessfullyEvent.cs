@@ -4,7 +4,7 @@ using System.Text;
 
 namespace MassTransit.Messages.Models.Events
 {
-   public class OrderSubmittedEvent
+   public class OrderSubmittedSuccessfullyEvent
     {
         public Guid CorrelationId { get; set; }
     }
