@@ -27,17 +27,16 @@ namespace Shippment.Consumers
             if (context.GetRetryAttempt() == 0)
             {
 
-                if (context.Message.Amount < 2)
-                {
-                    publishEndpoint.Publish<OrderShippedSuccessfullyEvent>(new OrderShippedSuccessfullyEvent() { CorrelationId = context.Message.CorrelationId });
-                }
-                else
-                {
-                    publishEndpoint.Publish<OrderShippedFailedEvent>(new OrderShippedFailedEvent() { CorrelationId = context.Message.CorrelationId });
-                }
-                // _logger.LogInformation("Value Retry 1 Recived From Queue to Branch 1: {from},{to},{schoolName},{Description}", context.Message.From, context.Message.To, context.Message.SchoolName, context.Message.Description);
-                //return Task.FromResult(1);
-                // _logger.LogInformation("Value Retry 1 Recived From Queue to Branch 1: {from},{to},{schoolName},{Description}", context.Message.From, context.Message.To, context.Message.SchoolName, context.Message.Description);
+                //if (context.Message.Amount < 2)
+                //{
+                //    publishEndpoint.Publish<OrderShippedSuccessfullyEvent>(new OrderShippedSuccessfullyEvent() { CorrelationId = context.Message.CorrelationId });
+                //}
+                //else
+                //{
+                //    publishEndpoint.Publish<OrderShippedFailedEvent>(new OrderShippedFailedEvent() { CorrelationId = context.Message.CorrelationId });
+                //}
+                publishEndpoint.Publish<OrderShippedFailedEvent>(new OrderShippedFailedEvent() { OrderId = context.Message.OrderId});
+               
                 return Task.FromResult(1);
             }
             if (context.GetRetryAttempt() == 1)

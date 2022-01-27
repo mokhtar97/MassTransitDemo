@@ -42,7 +42,17 @@ namespace Order.Api.Controllers
          
             return Ok(order.Amount);
         }
-        
+
+        [HttpPost("Success")]
+        public ActionResult Success([FromBody] Orders order)
+        {
+            
+
+            _publishEndpoint.Publish<OrderSuccessCreatedEvent>(new OrderSuccessCreatedEvent());
+
+            return Ok(order.Amount);
+        }
+
     }
 }
 

@@ -29,13 +29,12 @@ namespace Stock.Api.Consumers
 
                 if (context.Message.Amount > 2)
                 {
-                    publishEndpoint.Publish<OrderSubmittedFailedEvent>(new OrderSubmittedFailedEvent() { CorrelationId = context.Message.CorrelationId });
+                    publishEndpoint.Publish<OrderSubmittedFailedEvent>(new OrderSubmittedFailedEvent() {  OrderId = context.Message.OrderId});
                 }
                 else
                 {
-                    publishEndpoint.Publish<OrderShippmentStartEvent>(new OrderShippmentStartEvent() { CorrelationId = context.Message.CorrelationId });
+                    publishEndpoint.Publish<OrderSubmittedSuccessfullyEvent>(new OrderSubmittedSuccessfullyEvent() { OrderId = context.Message.OrderId });
                 }
-            
                 return Task.FromResult(1);
             }
             if (context.GetRetryAttempt() == 1)
