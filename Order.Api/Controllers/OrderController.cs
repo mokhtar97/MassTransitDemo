@@ -39,7 +39,7 @@ namespace Order.Api.Controllers
              orderContext.SaveChanges();
             
             _publishEndpoint.Publish<OrderCreatedEvent>(mapper.Map<OrderCreatedEvent>(entity.Entity));
-         
+           
             return Ok(order.Amount);
         }
 

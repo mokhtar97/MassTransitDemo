@@ -48,17 +48,15 @@ namespace MassTransit.Management.Sagas.Order
                          context.Instance.Name = context.Data.Name;
                          context.Instance.Amount = context.Data.Amount;
                      })
-                     .Publish(context => new OrderSubmitCreatedEvent() { CorrelationId = context.Instance.CorrelationId, Amount = context.Instance.Amount, Name = context.Instance.Name,OrderId= context.Instance.OrderId })
-                     .TransitionTo(SubmitOrderState)
-                    ,
-
+                     .Publish(context => new OrderSubmitCreatedEvent() { CorrelationId = context.Instance.CorrelationId, Amount = context.Instance.Amount, Name = context.Instance.Name, OrderId = context.Instance.OrderId })
+                   //  .TransitionTo(SubmitOrderState),
+                   ,
                    When(OrderSubmittedFailedFromStock).TransitionTo(SubmitOrderState),
-                   When(OrderSubmittedSuccessFullyFromStock).TransitionTo(SubmitOrderState)
-                   //When(OrderShippedSuccessfully).TransitionTo(ShippmentOrderState),
-                  // When(OrderShippedFailed).TransitionTo(ShippmentOrderState)
+                   When(OrderSubmittedSuccessFullyFromStock).TransitionTo(SubmitOrderState),
+                   When(OrderShippedSuccessfully).TransitionTo(ShippmentOrderState),
+                   When(OrderShippedFailed).TransitionTo(ShippmentOrderState)
 
-
-                      );
+                      ) ;
             #endregion
            
 
@@ -83,14 +81,16 @@ namespace MassTransit.Management.Sagas.Order
                     .ThenAsync(
                         context => Console.Out.WriteLineAsync(
                             $"Order Submitted processed. Id: {context.Instance.CorrelationId}"))
-                 .Publish(context => new OrderShippmentStartEvent() { Name = " Start Shippment" , OrderId = context.Instance.OrderId })
-                    .Finalize());
+                   
+                    .Publish(context => new OrderShippmentStartEvent() { Name = " Start Shippment" , OrderId = context.Instance.OrderId }).TransitionTo(ShippmentOrderState)
+
+                    );
 
 
 
 
             During(ShippmentOrderState,
-          
+                 
                    When(OrderShippedSuccessfully)
                    .Then(context => {
                        context.Instance.OrderCreatedDate = DateTime.Now;
