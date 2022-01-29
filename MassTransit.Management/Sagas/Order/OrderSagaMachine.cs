@@ -39,7 +39,7 @@ namespace MassTransit.Management.Sagas.Order
 
             #endregion
 
-            #region Initial State
+            #region Initial State 
             Initially(
                   When(OrderCreate)
                      .Then(context =>
@@ -52,18 +52,19 @@ namespace MassTransit.Management.Sagas.Order
                    //  .TransitionTo(SubmitOrderState),
                    ,
                    When(OrderSubmittedFailedFromStock).TransitionTo(SubmitOrderState),
-                   When(OrderSubmittedSuccessFullyFromStock).TransitionTo(SubmitOrderState),
-                   When(OrderShippedSuccessfully).TransitionTo(ShippmentOrderState),
-                   When(OrderShippedFailed).TransitionTo(ShippmentOrderState)
+                   When(OrderSubmittedSuccessFullyFromStock).TransitionTo(SubmitOrderState)
+                   //When(OrderShippedSuccessfully).TransitionTo(ShippmentOrderState),
+                   //When(OrderShippedFailed).TransitionTo(ShippmentOrderState)
 
                       ) ;
             #endregion
            
 
 
+
             #region During
             During(SubmitOrderState,
-              
+              Ignore(OrderShippedFailed),
                  When(OrderSubmittedFailedFromStock)
                  .Then(context => {
                      context.Instance.OrderCreatedDate = DateTime.Now;
@@ -90,7 +91,7 @@ namespace MassTransit.Management.Sagas.Order
 
 
             During(ShippmentOrderState,
-                 
+                 Ignore(OrderSubmittedSuccessFullyFromStock),
                    When(OrderShippedSuccessfully)
                    .Then(context => {
                        context.Instance.OrderCreatedDate = DateTime.Now;
@@ -103,7 +104,8 @@ namespace MassTransit.Management.Sagas.Order
                     context.Instance.OrderId = context.Data.OrderId;
                 })
                     .Publish(context => new OrderFailedCreatedEvent() { Name = " Failed  From Shippment", Id = context.Instance.OrderId })
-                    .Finalize());
+                    //.Finalize()
+                    );
             #endregion
 
             SetCompletedWhenFinalized();

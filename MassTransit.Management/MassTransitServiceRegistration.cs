@@ -1,11 +1,15 @@
 ﻿using GreenPipes;
+using MassTransit.EntityFrameworkCoreIntegration;
 using MassTransit.Management.Core;
 using MassTransit.Management.Sagas.Order;
+using MassTransit.Management.Sagas.Order.Infrastructure;
 using MassTransit.Saga;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Reflection;
 using System.Text;
 
 namespace MassTransit.Management
@@ -21,7 +25,7 @@ namespace MassTransit.Management
             services.AddMassTransit(x =>
             {
                 x.SetKebabCaseEndpointNameFormatter();
-               
+
                 //consumers
                 if (consumers != null)
                 {
@@ -49,11 +53,27 @@ namespace MassTransit.Management
                 });
 
                 //saga 
+                //x.AddSagaStateMachine<OrderSagaMachine, OrderSagaStatus>()
+                //  .InMemoryRepository();
+
+
                 x.AddSagaStateMachine<OrderSagaMachine, OrderSagaStatus>()
-                  .InMemoryRepository();
+                .EntityFrameworkRepository(r =>
+                {
+                    r.ConcurrencyMode = ConcurrencyMode.Pessimistic; // or use Optimistic, which requires RowVersion
+
+                    r.AddDbContext<DbContext, OrderStateDbContext>((provider, builder) =>
+                   {
+                       builder.UseSqlServer("Server=.; Initial Catalog=GaebSaga-Order; Trusted_Connection = True;", m =>
+                       {
+                           m.MigrationsAssembly(Assembly.GetExecutingAssembly().GetName().Name);
+                           m.MigrationsHistoryTable($"__{nameof(OrderStateDbContext)}");
+                       });
+                   });
+                });
 
 
-
+                
 
 
             });
