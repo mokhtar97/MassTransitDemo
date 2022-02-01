@@ -11,6 +11,11 @@ namespace Branch2.Consumer
     public class DecisionConsumer : IConsumer<Decision>
     {
         ILogger<DecisionConsumer> _logger;
+
+        public DecisionConsumer()
+        {
+
+        }
         public DecisionConsumer(ILogger<DecisionConsumer> logger)
         {
             _logger = logger;

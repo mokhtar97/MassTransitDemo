@@ -10,8 +10,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace MassTransit.Management.Migrations
 {
     [DbContext(typeof(OrderStateDbContext))]
-    [Migration("20220129173128_step1")]
-    partial class step1
+    [Migration("20220131100934_NewGuid")]
+    partial class NewGuid
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -19,7 +19,7 @@ namespace MassTransit.Management.Migrations
             modelBuilder
                 .UseIdentityColumns()
                 .HasAnnotation("Relational:MaxIdentifierLength", 128)
-                .HasAnnotation("ProductVersion", "5.0.3");
+                .HasAnnotation("ProductVersion", "5.0.1");
 
             modelBuilder.Entity("MassTransit.Management.Sagas.Order.OrderSagaStatus", b =>
                 {
@@ -42,8 +42,8 @@ namespace MassTransit.Management.Migrations
                     b.Property<DateTime>("OrderFailedCreatedDate")
                         .HasColumnType("datetime2");
 
-                    b.Property<int>("OrderId")
-                        .HasColumnType("int");
+                    b.Property<Guid>("OrderId")
+                        .HasColumnType("uniqueidentifier");
 
                     b.HasKey("CorrelationId");
 

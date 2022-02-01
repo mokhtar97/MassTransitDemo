@@ -41,9 +41,9 @@ namespace Branch1
            
             
 
-            var z =new DecisionConsumer();
+            var b1Consumer =new DecisionConsumer();
             List<ConsumerBaseEntity> consumers = new List<ConsumerBaseEntity>();
-            consumers.Add(new ConsumerBaseEntity() { ConsumerType=z.GetType(),InstanceId="baghadido" });
+            consumers.Add(new ConsumerBaseEntity() { ConsumerType= b1Consumer.GetType(),InstanceId="Branch1" });
             services.AddMassTransitConfiguration(consumers);
         }
 

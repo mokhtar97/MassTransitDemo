@@ -14,16 +14,16 @@ namespace Order.Api.Consumers
         ILogger<OrderFailedConsumer> _logger;
         private readonly OrderContext orderContext;
 
-        public OrderFailedConsumer()
+  public OrderFailedConsumer()
     {
 
     }
 
     public OrderFailedConsumer(ILogger<OrderFailedConsumer> logger, OrderContext _orderContext)
     {
-        _logger = logger;
+            _logger = logger;
             orderContext = _orderContext;
-        }
+    }
     public Task Consume(ConsumeContext<OrderFailedCreatedEvent> context)
     {
 

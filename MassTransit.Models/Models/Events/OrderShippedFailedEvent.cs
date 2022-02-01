@@ -8,7 +8,7 @@ namespace MassTransit.Messages.Models.Events
     {
         public Guid CorrelationId { get; set; }
 
-        public int OrderId { get; set; }
+        public Guid OrderId { get; set; }
         public string Name { get; set; }
         public int Amount { get; set; }
     }

@@ -1,5 +1,7 @@
 using Branch2.Consumer;
 using MassTransit;
+using MassTransit.Management;
+using MassTransit.Management.Core;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc;
@@ -34,21 +36,10 @@ namespace Branch2
                 c.SwaggerDoc("v1", new OpenApiInfo { Title = "Branch2", Version = "v1" });
             });
 
-            services.AddMassTransit(x =>
-            {
-                //x.AddConsumer<DeisionConsumer>();
-
-                x.SetKebabCaseEndpointNameFormatter();
-
-                x.AddConsumer<DecisionConsumer>().Endpoint(c => c.InstanceId = "Branch2");
-
-                x.UsingRabbitMq((context, cfg) =>
-                {
-                    cfg.ConfigureEndpoints(context);
-                });
-
-            });
-            services.AddMassTransitHostedService();
+            var b2Consumer = new DecisionConsumer();
+            List<ConsumerBaseEntity> consumers = new List<ConsumerBaseEntity>();
+            consumers.Add(new ConsumerBaseEntity() { ConsumerType = b2Consumer.GetType(), InstanceId = "Branch2" });
+            services.AddMassTransitConfiguration(consumers);
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

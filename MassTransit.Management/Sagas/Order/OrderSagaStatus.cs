@@ -12,7 +12,7 @@ namespace MassTransit.Management.Sagas.Order
         public int CurrentState { get; set; }
 
         //this for business
-        public int OrderId { get; set; }
+        public Guid OrderId { get; set; }
         public string Name { get; set; }
         public int Amount { get; set; }
         public DateTime OrderCreatedDate { get; set; }

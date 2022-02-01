@@ -29,7 +29,7 @@ namespace Stock.Api.Consumers
 
               //  if (context.Message.Amount > 2)
                // {
-                    publishEndpoint.Publish<OrderFailedCreatedEvent>(new OrderFailedCreatedEvent() { Id = 12 });
+                   // publishEndpoint.Publish<OrderFailedCreatedEvent>(new OrderFailedCreatedEvent() { Id = 12 });
                // }
                 // _logger.LogInformation("Value Retry 1 Recived From Queue to Branch 1: {from},{to},{schoolName},{Description}", context.Message.From, context.Message.To, context.Message.SchoolName, context.Message.Description);
                 return Task.FromResult(1);

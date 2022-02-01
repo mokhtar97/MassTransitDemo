@@ -52,10 +52,10 @@ namespace MassTransit.Management
 
                 });
 
+                #region Saga Configuration
                 //saga 
                 //x.AddSagaStateMachine<OrderSagaMachine, OrderSagaStatus>()
                 //  .InMemoryRepository();
-
 
                 x.AddSagaStateMachine<OrderSagaMachine, OrderSagaStatus>()
                 .EntityFrameworkRepository(r =>
@@ -72,8 +72,9 @@ namespace MassTransit.Management
                    });
                 });
 
+                #endregion
 
-                
+
 
 
             });

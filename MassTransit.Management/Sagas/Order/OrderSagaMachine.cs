@@ -14,28 +14,26 @@ namespace MassTransit.Management.Sagas.Order
 
 
             #region Declare Events
-            Event(() => OrderCreate, x =>
-              x.CorrelateBy(order => order.OrderId.ToString(),
-              context => context.Message.OrderId.ToString())
-              .SelectId(context => NewId.NextGuid()));
+
+            Event(() => OrderCreate, x => x.CorrelateById(context => context.Message.OrderId));
 
             Event(() => OrderSubmitCreated, x => x.CorrelateById(context =>
-               context.Message.CorrelationId));
+               context.Message.OrderId));
             
             //From Stock Service
             Event(() => OrderSubmittedFailedFromStock, x => x.CorrelateById(context =>
-                context.Message.CorrelationId));
+                context.Message.OrderId));
 
             Event(() => OrderSubmittedSuccessFullyFromStock, x => x.CorrelateById(context =>
-               context.Message.CorrelationId));
+               context.Message.OrderId));
 
 
             //From Shippment Service
             Event(() => OrderShippedSuccessfully, x => x.CorrelateById(context =>
-                context.Message.CorrelationId));
+                context.Message.OrderId));
 
             Event(() => OrderShippedFailed, x => x.CorrelateById(context =>
-                context.Message.CorrelationId));
+                context.Message.OrderId));
 
             #endregion
 
@@ -48,67 +46,79 @@ namespace MassTransit.Management.Sagas.Order
                          context.Instance.Name = context.Data.Name;
                          context.Instance.Amount = context.Data.Amount;
                      })
-                     .Publish(context => new OrderSubmitCreatedEvent() { CorrelationId = context.Instance.CorrelationId, Amount = context.Instance.Amount, Name = context.Instance.Name, OrderId = context.Instance.OrderId })
-                   //  .TransitionTo(SubmitOrderState),
-                   ,
-                   When(OrderSubmittedFailedFromStock).TransitionTo(SubmitOrderState),
-                   When(OrderSubmittedSuccessFullyFromStock).TransitionTo(SubmitOrderState)
-                   //When(OrderShippedSuccessfully).TransitionTo(ShippmentOrderState),
-                   //When(OrderShippedFailed).TransitionTo(ShippmentOrderState)
+                     .Publish(context => new OrderSubmitCreatedEvent() { CorrelationId = context.Instance.OrderId, Amount = context.Instance.Amount, Name = context.Instance.Name, OrderId = context.Instance.OrderId }),
 
+                   When(OrderSubmittedFailedFromStock).Then(context => {
+                       context.Instance.OrderCreatedDate = DateTime.Now;
+                       context.Instance.OrderId = context.Data.OrderId;
+                       Console.Out.WriteLineAsync(
+                            $"Order Submitted processed. Id: Failed From Stock");
+                   })
+                    .Publish(context => new OrderFailedCreatedEvent() { Name = " Failed  From Stock", Id = context.Instance.OrderId }),
+                  
+                   
+                    When(OrderSubmittedSuccessFullyFromStock)
+                    .Then(context => {
+                        context.Instance.OrderCreatedDate = DateTime.Now;
+                        context.Instance.OrderId = context.Data.OrderId;
+                    })
+                    .ThenAsync(
+                        context => Console.Out.WriteLineAsync(
+                            $"Order Submitted processed. Id: {context.Instance.OrderId}"))
+
+                    .Publish(context => new OrderShippmentStartEvent() { Name = " Start Shippment", OrderId = context.Instance.OrderId }).TransitionTo(ShippmentOrderState)                          
                       ) ;
             #endregion
-           
 
+            #region During Config
+            #region SubmitStock
+            //#region During
+            //During(SubmitOrderState,
+            //  Ignore(OrderShippedFailed),
+            //     When(OrderSubmittedFailedFromStock)
+            //     .Then(context => {
+            //         context.Instance.OrderCreatedDate = DateTime.Now;
+            //         context.Instance.OrderId = context.Data.OrderId;
+            //        Console.Out.WriteLineAsync(
+            //             $"Order Submitted processed. Id: Failed From Stock");
+            //     })
+            //        .Publish(context => new OrderFailedCreatedEvent() { Name = " Failed  From Stock" ,Id=context.Instance.OrderId}).Finalize(),
+            //     When(OrderSubmittedSuccessFullyFromStock)
+            //    .Then(context => {
+            //        context.Instance.OrderCreatedDate = DateTime.Now;
+            //        context.Instance.OrderId = context.Data.OrderId;
+            //    })
+            //        .ThenAsync(
+            //            context => Console.Out.WriteLineAsync(
+            //                $"Order Submitted processed. Id: {context.Instance.OrderId}"))
 
+            //        .Publish(context => new OrderShippmentStartEvent() { Name = " Start Shippment" , OrderId = context.Instance.OrderId }).TransitionTo(ShippmentOrderState)
 
-            #region During
-            During(SubmitOrderState,
-              Ignore(OrderShippedFailed),
-                 When(OrderSubmittedFailedFromStock)
-                 .Then(context => {
-                     context.Instance.OrderCreatedDate = DateTime.Now;
-                     context.Instance.OrderId = context.Data.OrderId;
-                 })
-                    .ThenAsync(
-                        context => Console.Out.WriteLineAsync(
-                            $"Order Submitted processed. Id: {context.Instance.CorrelationId}"))
-                    .Publish(context => new OrderFailedCreatedEvent() { Name = " Failed  From Stock" ,Id=context.Instance.OrderId}),
-                 When(OrderSubmittedSuccessFullyFromStock)
-                .Then(context => {
-                    context.Instance.OrderCreatedDate = DateTime.Now;
-                    context.Instance.OrderId = context.Data.OrderId;
-                })
-                    .ThenAsync(
-                        context => Console.Out.WriteLineAsync(
-                            $"Order Submitted processed. Id: {context.Instance.CorrelationId}"))
-                   
-                    .Publish(context => new OrderShippmentStartEvent() { Name = " Start Shippment" , OrderId = context.Instance.OrderId }).TransitionTo(ShippmentOrderState)
-
-                    );
-
-
-
+            //        ); 
+            #endregion
 
             During(ShippmentOrderState,
                  Ignore(OrderSubmittedSuccessFullyFromStock),
                    When(OrderShippedSuccessfully)
-                   .Then(context => {
+                   .Then(context =>
+                   {
                        context.Instance.OrderCreatedDate = DateTime.Now;
                        context.Instance.OrderId = context.Data.OrderId;
                    })
                     .Publish(context => new OrderFailedCreatedEvent() { Name = " Success  From Shippment", Id = context.Instance.OrderId }),
                  When(OrderShippedFailed)
-                .Then(context => {
+                .Then(context =>
+                {
                     context.Instance.OrderCreatedDate = DateTime.Now;
                     context.Instance.OrderId = context.Data.OrderId;
                 })
                     .Publish(context => new OrderFailedCreatedEvent() { Name = " Failed  From Shippment", Id = context.Instance.OrderId })
-                    //.Finalize()
+                    .Finalize()
                     );
             #endregion
 
-            SetCompletedWhenFinalized();
+
+             SetCompletedWhenFinalized();
         }
 
         public State SubmitOrderState { get; private set; }

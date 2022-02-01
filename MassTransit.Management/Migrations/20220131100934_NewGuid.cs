@@ -3,7 +3,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 
 namespace MassTransit.Management.Migrations
 {
-    public partial class step1 : Migration
+    public partial class NewGuid : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {
@@ -13,7 +13,7 @@ namespace MassTransit.Management.Migrations
                 {
                     CorrelationId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
                     CurrentState = table.Column<int>(type: "int", maxLength: 64, nullable: false),
-                    OrderId = table.Column<int>(type: "int", nullable: false),
+                    OrderId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
                     Name = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     Amount = table.Column<int>(type: "int", nullable: false),
                     OrderCreatedDate = table.Column<DateTime>(type: "datetime2", nullable: false),
