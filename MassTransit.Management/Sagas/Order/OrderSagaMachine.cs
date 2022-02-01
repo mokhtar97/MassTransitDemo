@@ -54,7 +54,7 @@ namespace MassTransit.Management.Sagas.Order
                        Console.Out.WriteLineAsync(
                             $"Order Submitted processed. Id: Failed From Stock");
                    })
-                    .Publish(context => new OrderFailedCreatedEvent() { Name = " Failed  From Stock", Id = context.Instance.OrderId }),
+                    .Publish(context => new OrderFailedCreatedEvent() { Name = " Failed  From Stock", Id = context.Instance.OrderId }).Finalize(),
                   
                    
                     When(OrderSubmittedSuccessFullyFromStock)
@@ -71,31 +71,6 @@ namespace MassTransit.Management.Sagas.Order
             #endregion
 
             #region During Config
-            #region SubmitStock
-            //#region During
-            //During(SubmitOrderState,
-            //  Ignore(OrderShippedFailed),
-            //     When(OrderSubmittedFailedFromStock)
-            //     .Then(context => {
-            //         context.Instance.OrderCreatedDate = DateTime.Now;
-            //         context.Instance.OrderId = context.Data.OrderId;
-            //        Console.Out.WriteLineAsync(
-            //             $"Order Submitted processed. Id: Failed From Stock");
-            //     })
-            //        .Publish(context => new OrderFailedCreatedEvent() { Name = " Failed  From Stock" ,Id=context.Instance.OrderId}).Finalize(),
-            //     When(OrderSubmittedSuccessFullyFromStock)
-            //    .Then(context => {
-            //        context.Instance.OrderCreatedDate = DateTime.Now;
-            //        context.Instance.OrderId = context.Data.OrderId;
-            //    })
-            //        .ThenAsync(
-            //            context => Console.Out.WriteLineAsync(
-            //                $"Order Submitted processed. Id: {context.Instance.OrderId}"))
-
-            //        .Publish(context => new OrderShippmentStartEvent() { Name = " Start Shippment" , OrderId = context.Instance.OrderId }).TransitionTo(ShippmentOrderState)
-
-            //        ); 
-            #endregion
 
             During(ShippmentOrderState,
                  Ignore(OrderSubmittedSuccessFullyFromStock),
